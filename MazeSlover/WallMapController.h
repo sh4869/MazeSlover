@@ -1,7 +1,7 @@
 #ifndef MAPCONTROLLER_H_
 #define MAPCONTROLLER_H_
 
-#include "Types.h"
+#include "WallTypes.h"
 #include <array>
 
 enum class MapDirection : int { LEFT, BACK, RIGHT, FRONT };
