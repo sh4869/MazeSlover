@@ -8,13 +8,13 @@
 enum class PosStatus : char { UNSEARCHED, SEARCHED, GOAL, CURRENT };
 // 4bitで上の桁から下左だけを保存
 using WallInfo = std::pair<std::bitset<2>, PosStatus>;
-static constexpr char mazeSize = 16;
+static constexpr char mazeSize = 4;
 // X,Yの順番で指定することにします
 using WallMap = std::array<std::array<WallInfo, mazeSize>, mazeSize>;
 
 using MapPosition = std::pair<char, char>;
 // Function Alias
-static constexpr MapPosition mapPos(char x, char y) { return std::make_pair(x, y); }
+static constexpr auto mapPos = std::make_pair<MapPosition::first_type, MapPosition::second_type>;
 
 using StepMap = std::array<std::array<unsigned char, mazeSize>, mazeSize>;
 

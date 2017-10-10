@@ -37,7 +37,7 @@ void MapController::setPosStatus(MapPosition pos, PosStatus status) {
     wMap.at(pos.first).at(pos.second).second = status;
 }
 
-bool MapController::hasWall(MapDirection dir, MapPosition pos) {
+bool MapController::HasWall(MapDirection dir, MapPosition pos) {
     switch (dir) {
         case MapDirection::LEFT:
         case MapDirection::BACK:
@@ -65,8 +65,12 @@ bool MapController::hasWall(MapDirection dir, MapPosition pos) {
     }
     return false;
 }
-PosStatus MapController::getPosStatus(MapPosition pos) {
+PosStatus MapController::GetPosStatus(MapPosition pos) {
     return wMap.at(pos.first).at(pos.second).second;
+}
+
+unsigned char MapController::GetStep(MapPosition pos){
+    return sMap.at(pos.first).at(pos.second);
 }
 
 MapController::MapController() {
@@ -120,25 +124,25 @@ void MapController::GenerateStepMap() {
                 if (sMap.at(i).at(j) == count) {
                     // RIGHT
                     if (i + 1 != mazeSize &&
-                        !MapController::hasWall(MapDirection::RIGHT, std::make_pair(i, j)) &&
+                        !HasWall(MapDirection::RIGHT, std::make_pair(i, j)) &&
                         sMap.at(i + 1).at(j) == 255) {
                         sMap.at(i + 1).at(j) = count + 1;
                     }
                     // LEFT
                     if (i - 1 != -1 &&
-                        !MapController::hasWall(MapDirection::LEFT, std::make_pair(i, j)) &&
+                        !HasWall(MapDirection::LEFT, std::make_pair(i, j)) &&
                         sMap.at(i - 1).at(j) == 255) {
                         sMap.at(i - 1).at(j) = count + 1;
                     }
                     // FRONT
                     if (j + 1 != mazeSize &&
-                        !MapController::hasWall(MapDirection::FRONT, std::make_pair(i, j)) &&
+                        !HasWall(MapDirection::FRONT, std::make_pair(i, j)) &&
                         sMap.at(i).at(j + 1) == 255) {
                         sMap.at(i).at(j + 1) = count + 1;
                     }
                     // BACK
                     if (j - 1 != -1 &&
-                        !MapController::hasWall(MapDirection::BACK, std::make_pair(i, j)) &&
+                        !HasWall(MapDirection::BACK, std::make_pair(i, j)) &&
                         sMap.at(i).at(j - 1) == 255) {
                         sMap.at(i).at(j - 1) = count + 1;
                     }
@@ -150,4 +154,32 @@ void MapController::GenerateStepMap() {
             break;
         }
     }
+}
+
+std::queue<MapDirection> MapController::GetRoot(){
+    std::queue<MapDirection> que;
+    int step = GetStep(currentPos);
+    auto cPos = currentPos;
+    while(step > 0){
+        // とりあえず右左上下の順番で探してく形で
+        // LEFT
+        if(cPos.first - 1 > -1 && GetStep(mapPos(cPos.first - 1,(char)cPos.second)) == step - 1){
+            que.push(MapDirection::LEFT);
+            cPos = mapPos(cPos.first - 1,(char)cPos.second);
+        // RIGHT
+        } else if(cPos.first + 1 != mazeSize && GetStep(mapPos(cPos.first + 1,(char)cPos.second)) == step - 1){
+            que.push(MapDirection::RIGHT);
+            cPos = mapPos(cPos.first + 1,(char)cPos.second);
+        // BACK
+        } else if(cPos.second - 1 > -1 && GetStep(mapPos((char)cPos.first,cPos.second-1)) == step - 1){
+            que.push(MapDirection::BACK);
+            cPos = mapPos((char)cPos.first,cPos.second - 1);
+        // FRONT
+        } else if(cPos.second + 1 != mazeSize && GetStep(mapPos((char)cPos.first,cPos.second + 1)) == step - 1){
+            que.push(MapDirection::FRONT);
+            cPos = mapPos((char)cPos.first,cPos.second + 1);
+        }
+        step--;
+    }
+    return que;
 }
