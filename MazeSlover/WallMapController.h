@@ -11,21 +11,28 @@ class MapController {
 private:
     WallMap wMap;
     StepMap sMap;
-    void setWall(MapDirection dir, MapPosition pos);
+    
     void setPosStatus(MapPosition pos, PosStatus status);
     GoalPositon goalPos;
     MapPosition currentPos;
 public:
+
+    MapController();
+    void InitMap();
+    void GenerateStepMap();
+    
+    // Getter
     bool HasWall(MapDirection dir, MapPosition pos);
     PosStatus GetPosStatus(MapPosition pos);
     unsigned char GetStep(MapPosition pos);
-    MapController();
-    void InitMap();
+    std::queue<MapDirection> GetRoot();
     const WallMap& GetWallMap();
     const StepMap& GetStepMap();
+    
+    // Setter
+    void SetWall(MapDirection dir, MapPosition pos);
     void SetGoal(GoalPositon goal);
-    void GenerateStepMap();
-    std::queue<MapDirection> GetRoot();
+    
 };
 
 #endif

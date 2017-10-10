@@ -3,7 +3,7 @@
 #include <iostream>
 #include <utility>
 
-void MapController::setWall(MapDirection dir, MapPosition pos) {
+void MapController::SetWall(MapDirection dir, MapPosition pos) {
     switch (dir) {
         // 左と下はそのままset
         case MapDirection::LEFT:
@@ -90,15 +90,15 @@ void MapController::InitMap() {
     MapPosition pos;
     for (std::size_t i = 0; i < mazeSize; ++i) {
         // 一番上
-        setWall(MapDirection::FRONT, std::make_pair(i, mazeSize - 1));
+        SetWall(MapDirection::FRONT, std::make_pair(i, mazeSize - 1));
         // 一番下
-        setWall(MapDirection::BACK, std::make_pair(i, 0));
+        SetWall(MapDirection::BACK, std::make_pair(i, 0));
         // 一番左
-        setWall(MapDirection::LEFT, std::make_pair(0, i));
+        SetWall(MapDirection::LEFT, std::make_pair(0, i));
         // 一番右
-        setWall(MapDirection::RIGHT, std::make_pair(mazeSize - 1, i));
+        SetWall(MapDirection::RIGHT, std::make_pair(mazeSize - 1, i));
     }
-    setWall(MapDirection::RIGHT, std::make_pair(0, 0));
+    SetWall(MapDirection::RIGHT, std::make_pair(0, 0));
     currentPos = mapPos(0,0);
     setPosStatus(mapPos(0, 0), PosStatus::CURRENT);
 }
@@ -114,9 +114,13 @@ void MapController::SetGoal(std::array<MapPosition, goalSize> goal) {
 }
 
 void MapController::GenerateStepMap() {
+    std::array<unsigned char, mazeSize> arr;
+    arr.fill(255);
+    sMap.fill(arr);
     for (auto g : goalPos) {
         sMap.at(g.first).at(g.second) = 0;
     }
+
     int count = 0;
     while (1) {
         for (int i = 0; i < mazeSize; i++) {
