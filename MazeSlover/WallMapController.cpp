@@ -160,6 +160,7 @@ void MapController::UpdateStepMap(int startStep) {
     }
 }
 
+/*
 std::queue<MapDirection> MapController::GetRoot() {
     std::queue<MapDirection> que;
     int step = GetStep(currentPos);
@@ -191,3 +192,4 @@ std::queue<MapDirection> MapController::GetRoot() {
     }
     return que;
 }
+*/

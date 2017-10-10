@@ -3,7 +3,6 @@
 
 #include "Types.h"
 #include <array>
-#include <queue>
 
 enum class MapDirection : int { LEFT, BACK, RIGHT, FRONT };
 
@@ -26,7 +25,7 @@ public:
     bool HasWall(MapDirection dir, MapPosition pos);
     PosStatus GetPosStatus(MapPosition pos);
     unsigned char GetStep(MapPosition pos);
-    std::queue<MapDirection> GetRoot();
+    //std::queue<MapDirection> GetRoot();
     const WallMap& GetWallMap();
     const StepMap& GetStepMap();
     

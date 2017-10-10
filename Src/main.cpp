@@ -97,6 +97,7 @@ void PrintMap(MapController* controller) {
     }
     std::cout << std::endl;
     std::cout << "map size:" << sizeof(map) * sizeof(map[0]) << std::endl;
+    /*
     auto root = controller->GetRoot();
     while (!root.empty()) {
         switch (root.front()) {
@@ -116,6 +117,7 @@ void PrintMap(MapController* controller) {
         root.pop();
     }
     std::cout << std::endl;
+    */
 }
 
 int main(void) {
