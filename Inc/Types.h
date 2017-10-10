@@ -5,16 +5,20 @@
 #include <bitset>
 #include <utility>
 
-enum class PosStatus : char { UNSEARCHED, SEARCHED, GOAL };
+enum class PosStatus : char { UNSEARCHED, SEARCHED, GOAL, CURRENT };
 // 4bitで上の桁から下左だけを保存
 using WallInfo = std::pair<std::bitset<2>, PosStatus>;
-static constexpr int mazeSize = 16;
+static constexpr char mazeSize = 16;
 // X,Yの順番で指定することにします
-using Map = std::array<std::array<WallInfo, mazeSize>, mazeSize>;
-using MapPosition = std::pair<int, int>;
-using StepMap = std::array<std::array<unsigned char,mazeSize>,mazeSize>;
+using WallMap = std::array<std::array<WallInfo, mazeSize>, mazeSize>;
 
-static constexpr int goalSize = 1;
-using GoalPositon = std::array<MapPosition,goalSize>;
+using MapPosition = std::pair<char, char>;
+// Function Alias
+static constexpr MapPosition mapPos(char x, char y) { return std::make_pair(x, y); }
+
+using StepMap = std::array<std::array<unsigned char, mazeSize>, mazeSize>;
+
+static constexpr char goalSize = 1;
+using GoalPositon = std::array<MapPosition, goalSize>;
 
 #endif

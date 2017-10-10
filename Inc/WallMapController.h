@@ -8,17 +8,21 @@ enum class MapDirection : int { LEFT, BACK, RIGHT, FRONT };
 
 class MapController {
 private:
-    Map map;
+    WallMap wMap;
+    StepMap sMap;
     void setWall(MapDirection dir, MapPosition pos);
     void setPosStatus(MapPosition pos, PosStatus status);
     GoalPositon goalPos;
+    MapPosition currentPos;
 public:
-    static bool hasWall(MapDirection dir, MapPosition pos, const Map& map);
-    static PosStatus getPosStatus(MapPosition pos, const Map& map);
+    bool hasWall(MapDirection dir, MapPosition pos);
+    PosStatus getPosStatus(MapPosition pos);
     MapController();
     void InitMap();
-    const Map& GetMap();
+    const WallMap& GetWallMap();
+    const StepMap& GetStepMap();
     void SetGoal(GoalPositon goal);
+    void GenerateStepMap();
 };
 
 #endif

@@ -1,14 +1,15 @@
-#include <iostream>
 #include <stdio.h>
+#include <iostream>
 
-#include "MapController.h"
-#include "StepMapController.h"
+#include "WallMapController.h"
 
-void PrintMap(Map map,StepMap sMap) {
+void PrintMap(MapController* controller) {
+    WallMap map = controller->GetWallMap();
+    StepMap sMap = controller->GetStepMap();
     for (int j = mazeSize - 1; j >= 0; j--) {
         for (int i = 0; i < mazeSize; i++) {
             std::cout << "*";
-            if (MapController::hasWall(MapDirection::FRONT, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::FRONT, mapPos(i,j))) {
                 std::cout << "---";
             } else {
                 std::cout << "   ";
@@ -16,12 +17,12 @@ void PrintMap(Map map,StepMap sMap) {
         }
         std::cout << "*" << std::endl;
         for (int i = 0; i < mazeSize; i++) {
-            if (MapController::hasWall(MapDirection::LEFT, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::LEFT, mapPos(i,j))) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
             }
-            switch(MapController::getPosStatus(std::make_pair(i,j),map)){
+            switch (controller->getPosStatus(mapPos(i,j))) {
                 case PosStatus::UNSEARCHED:
                     std::cout << " ? ";
                     break;
@@ -31,8 +32,11 @@ void PrintMap(Map map,StepMap sMap) {
                 case PosStatus::SEARCHED:
                     std::cout << "   ";
                     break;
+                case PosStatus::CURRENT:
+                    std::cout << " ^ ";
+                    break;
             }
-            if (MapController::hasWall(MapDirection::RIGHT, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::RIGHT, mapPos(i,j))) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
@@ -42,7 +46,7 @@ void PrintMap(Map map,StepMap sMap) {
         std::cout << std::endl;
         for (int i = 0; i < mazeSize; i++) {
             std::cout << "*";
-            if (MapController::hasWall(MapDirection::BACK, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::BACK, mapPos(i,j))) {
                 std::cout << "---";
             } else {
                 std::cout << "   ";
@@ -52,10 +56,11 @@ void PrintMap(Map map,StepMap sMap) {
     }
     std::cout << std::endl << std::endl;
 
+    // 歩数マップ
     for (int j = mazeSize - 1; j >= 0; j--) {
         for (int i = 0; i < mazeSize; i++) {
             std::cout << "*";
-            if (MapController::hasWall(MapDirection::FRONT, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::FRONT, mapPos(i,j))) {
                 std::cout << "-----";
             } else {
                 std::cout << "     ";
@@ -63,15 +68,15 @@ void PrintMap(Map map,StepMap sMap) {
         }
         std::cout << "*" << std::endl;
         for (int i = 0; i < mazeSize; i++) {
-            if (MapController::hasWall(MapDirection::LEFT, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::LEFT, mapPos(i,j))) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
             }
             std::cout << " ";
-            printf("%3d",static_cast<int>(sMap.at(i).at(j)));
+            printf("%3d", static_cast<int>(sMap.at(i).at(j)));
             std::cout << " ";
-            if (MapController::hasWall(MapDirection::RIGHT, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::RIGHT, mapPos(i,j))) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
@@ -81,7 +86,7 @@ void PrintMap(Map map,StepMap sMap) {
         std::cout << std::endl;
         for (int i = 0; i < mazeSize; i++) {
             std::cout << "*";
-            if (MapController::hasWall(MapDirection::BACK, std::make_pair(i, j), map)) {
+            if (controller->hasWall(MapDirection::BACK, mapPos(i,j))) {
                 std::cout << "-----";
             } else {
                 std::cout << "     ";
@@ -94,15 +99,12 @@ void PrintMap(Map map,StepMap sMap) {
 }
 
 int main(void) {
-    MapController *controller = new MapController();
-    StepMapController *sMapController = new StepMapController();
+    MapController* controller = new MapController();
     controller->InitMap();
-    GoalPositon goal = {
-        std::make_pair(3,0)
-    };
-    PrintMap(controller->GetMap(),sMapController->GetStepMap());
+    GoalPositon goal = { std::make_pair(3, 0) };
+    PrintMap(controller);
     controller->SetGoal(goal);
-    sMapController->GenerateStepMap(controller->GetMap(),goal);
-    PrintMap(controller->GetMap(),sMapController->GetStepMap());
+    controller->GenerateStepMap();
+    PrintMap(controller);
     return 0;
 }
