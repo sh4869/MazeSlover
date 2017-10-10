@@ -1,23 +1,25 @@
-#include "WallMapController.h"
+#include "MapController.h"
 #include <bitset>
-#include <iostream>
 #include <utility>
+
+
+MapController* MapController::instance = nullptr;
+
+MapController::MapController() {}
 
 void MapController::SetWall(MapDirection dir, MapPosition pos) {
     switch (dir) {
         // 左と下はそのままset
         case MapDirection::LEFT:
         case MapDirection::BACK:
-            wMap.at(pos.first).at(pos.second).first.set(static_cast<int>(dir));
+            wMap.at(pos.first).at(pos.second).set(static_cast<int>(dir));
             break;
         case MapDirection::RIGHT:
             // 一番右は常にtrueにするので設定はしない
             if (pos.first + 1 == mazeSize) {
                 return;
             } else {
-                wMap.at(pos.first + 1)
-                    .at(pos.second)
-                    .first.set(static_cast<int>(MapDirection::LEFT));
+                wMap.at(pos.first + 1).at(pos.second).set(static_cast<int>(MapDirection::LEFT));
             }
             break;
         case MapDirection::FRONT:
@@ -25,31 +27,44 @@ void MapController::SetWall(MapDirection dir, MapPosition pos) {
             if (pos.second + 1 == mazeSize) {
                 return;
             } else {
-                wMap.at(pos.first)
-                    .at(pos.second + 1)
-                    .first.set(static_cast<int>(MapDirection::BACK));
+                wMap.at(pos.first).at(pos.second + 1).set(static_cast<int>(MapDirection::BACK));
             }
             break;
     }
 }
 
 void MapController::setPosStatus(MapPosition pos, PosStatus status) {
-    wMap.at(pos.first).at(pos.second).second = status;
+    switch (status) {
+        case PosStatus::CURRENT:
+            wMap.at(pos.first).at(pos.second)[2] = 1;
+            wMap.at(pos.first).at(pos.second)[3] = 1;
+            break;
+        case PosStatus::GOAL:
+            wMap.at(pos.first).at(pos.second)[2] = 1;
+            wMap.at(pos.first).at(pos.second)[3] = 0;
+            break;
+        case PosStatus::SEARCHED:
+            wMap.at(pos.first).at(pos.second)[2] = 0;
+            wMap.at(pos.first).at(pos.second)[3] = 1;
+            break;
+        case PosStatus::UNSEARCHED:
+            wMap.at(pos.first).at(pos.second)[2] = 0;
+            wMap.at(pos.first).at(pos.second)[3] = 0;
+            break;
+    }
 }
 
 bool MapController::HasWall(MapDirection dir, MapPosition pos) {
     switch (dir) {
         case MapDirection::LEFT:
         case MapDirection::BACK:
-            return wMap.at(pos.first).at(pos.second).first[static_cast<int>(dir)];
+            return wMap.at(pos.first).at(pos.second)[static_cast<int>(dir)];
         case MapDirection::RIGHT:
             // 一番上は常にtrue
             if (pos.first + 1 == mazeSize) {
                 return true;
             } else {
-                return wMap.at(pos.first + 1)
-                    .at(pos.second)
-                    .first[static_cast<int>(MapDirection::LEFT)];
+                return wMap.at(pos.first + 1).at(pos.second)[static_cast<int>(MapDirection::LEFT)];
             }
             break;
         case MapDirection::FRONT:
@@ -57,23 +72,32 @@ bool MapController::HasWall(MapDirection dir, MapPosition pos) {
             if (pos.second + 1 == mazeSize) {
                 return true;
             } else {
-                return wMap.at(pos.first)
-                    .at(pos.second + 1)
-                    .first[static_cast<int>(MapDirection::BACK)];
+                return wMap.at(pos.first).at(pos.second + 1)[static_cast<int>(MapDirection::BACK)];
             }
             break;
     }
     return false;
 }
+
 PosStatus MapController::GetPosStatus(MapPosition pos) {
-    return wMap.at(pos.first).at(pos.second).second;
+    std::bitset<8> bit = wMap.at(pos.first).at(pos.second);
+    if (bit[3] && bit[2]) {
+        return PosStatus::CURRENT;
+    } else if (bit[3] && !bit[2]) {
+        return PosStatus::GOAL;
+    } else if (!bit[3] && bit[2]) {
+        return PosStatus::SEARCHED;
+    } else if (!bit[3] && !bit[2]) {
+        return PosStatus::UNSEARCHED;
+    }
 }
 
 unsigned char MapController::GetStep(MapPosition pos) { return sMap.at(pos.first).at(pos.second); }
 
-MapController::MapController() {
+
+void MapController::init() {
     wMap = {};
-    WallInfo info = std::make_pair(static_cast<std::bitset<8> >(0), PosStatus::UNSEARCHED);
+    WallInfo info = static_cast<std::bitset<8> >(0);
     for (auto m : wMap) {
         m.fill(info);
     }
@@ -81,7 +105,14 @@ MapController::MapController() {
     std::array<unsigned char, mazeSize> arr;
     arr.fill(255);
     sMap.fill(arr);
-    // とりあえずスタート地点は(0,0)
+}
+
+MapController* MapController::GetInstance() {
+    if (instance == nullptr) {
+        instance = new MapController();
+        instance->init();
+    }
+    return instance;
 }
 
 void MapController::InitMap() {
@@ -107,7 +138,7 @@ const StepMap& MapController::GetStepMap() { return sMap; }
 void MapController::SetGoal(std::array<MapPosition, goalSize> goal) {
     goalPos = goal;
     for (auto g : goal) {
-        wMap.at(g.first).at(g.second).second = PosStatus::GOAL;
+        setPosStatus(mapPos((char)g.first, (char)g.second), PosStatus::GOAL);
         sMap.at(g.first).at(g.second) = 0;
     }
     UpdateStepMap(0);
@@ -192,4 +223,5 @@ std::queue<MapDirection> MapController::GetRoot() {
     }
     return que;
 }
+
 */

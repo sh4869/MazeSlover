@@ -7,14 +7,14 @@
 
 // Types
 enum class PosStatus : char { UNSEARCHED, SEARCHED, GOAL, CURRENT };
+enum class MapDirection : int { LEFT, BACK, RIGHT, FRONT };
+
 // 4bitで上の桁から下左だけを保存
-using WallInfo = std::pair<std::bitset<8>, PosStatus>;
+using WallInfo = std::bitset<8>;
 static constexpr char mazeSize = 16;
-// X,Yの順番で指定することにします
 using WallMap = std::array<std::array<WallInfo, mazeSize>, mazeSize>;
 
-using MapPosition = std::pair<char, char>;
-// Function Alias
+using MapPosition = std::pair<char, char>;  
 static constexpr auto mapPos = std::make_pair<MapPosition::first_type, MapPosition::second_type>;
 
 using StepMap = std::array<std::array<unsigned char, mazeSize>, mazeSize>;
@@ -23,19 +23,21 @@ static constexpr char goalSize = 1;
 using GoalPositon = std::array<MapPosition, goalSize>;
 
 
-enum class MapDirection : int { LEFT, BACK, RIGHT, FRONT };
 
 class MapController {
 private:
+    static MapController* instance;
     WallMap wMap;
     StepMap sMap;
     
     void setPosStatus(MapPosition pos, PosStatus status);
     GoalPositon goalPos;
     MapPosition currentPos;
-public:
 
     MapController();
+    void init();
+public:
+    static MapController* GetInstance();
     void InitMap();
 
     void UpdateStepMap(int startStep);
@@ -53,5 +55,6 @@ public:
     void SetGoal(GoalPositon goal);
     
 };
+
 
 #endif
