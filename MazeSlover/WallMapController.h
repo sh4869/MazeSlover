@@ -19,8 +19,9 @@ public:
 
     MapController();
     void InitMap();
-    void GenerateStepMap();
-    
+
+    void UpdateStepMap(int startStep);
+
     // Getter
     bool HasWall(MapDirection dir, MapPosition pos);
     PosStatus GetPosStatus(MapPosition pos);

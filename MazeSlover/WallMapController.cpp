@@ -69,13 +69,11 @@ PosStatus MapController::GetPosStatus(MapPosition pos) {
     return wMap.at(pos.first).at(pos.second).second;
 }
 
-unsigned char MapController::GetStep(MapPosition pos){
-    return sMap.at(pos.first).at(pos.second);
-}
+unsigned char MapController::GetStep(MapPosition pos) { return sMap.at(pos.first).at(pos.second); }
 
 MapController::MapController() {
     wMap = {};
-    WallInfo info = std::make_pair(static_cast<std::bitset<2> >(0), PosStatus::UNSEARCHED);
+    WallInfo info = std::make_pair(static_cast<std::bitset<8> >(0), PosStatus::UNSEARCHED);
     for (auto m : wMap) {
         m.fill(info);
     }
@@ -99,7 +97,7 @@ void MapController::InitMap() {
         SetWall(MapDirection::RIGHT, std::make_pair(mazeSize - 1, i));
     }
     SetWall(MapDirection::RIGHT, std::make_pair(0, 0));
-    currentPos = mapPos(0,0);
+    currentPos = mapPos(0, 0);
     setPosStatus(mapPos(0, 0), PosStatus::CURRENT);
 }
 
@@ -108,45 +106,47 @@ const StepMap& MapController::GetStepMap() { return sMap; }
 
 void MapController::SetGoal(std::array<MapPosition, goalSize> goal) {
     goalPos = goal;
-    for (auto v : goal) {
-        wMap.at(v.first).at(v.second).second = PosStatus::GOAL;
-    }
-}
-
-void MapController::GenerateStepMap() {
-    std::array<unsigned char, mazeSize> arr;
-    arr.fill(255);
-    sMap.fill(arr);
-    for (auto g : goalPos) {
+    for (auto g : goal) {
+        wMap.at(g.first).at(g.second).second = PosStatus::GOAL;
         sMap.at(g.first).at(g.second) = 0;
     }
+    UpdateStepMap(0);
+}
 
-    int count = 0;
+void MapController::UpdateStepMap(int startStep) {
+    int max = startStep;
+    for (int i = 0; i < mazeSize; i++) {
+        for (int j = 0; j < mazeSize; j++) {
+            if (sMap.at(i).at(j) > startStep) {
+                if (sMap.at(i).at(j) > max) {
+                    max = sMap.at(i).at(j);
+                }
+                sMap.at(i).at(j) = 255;
+            }
+        }
+    }
+    int count = startStep;
     while (1) {
         for (int i = 0; i < mazeSize; i++) {
             for (int j = 0; j < mazeSize; j++) {
                 if (sMap.at(i).at(j) == count) {
                     // RIGHT
-                    if (i + 1 != mazeSize &&
-                        !HasWall(MapDirection::RIGHT, std::make_pair(i, j)) &&
+                    if (i + 1 != mazeSize && !HasWall(MapDirection::RIGHT, std::make_pair(i, j)) &&
                         sMap.at(i + 1).at(j) == 255) {
                         sMap.at(i + 1).at(j) = count + 1;
                     }
                     // LEFT
-                    if (i - 1 != -1 &&
-                        !HasWall(MapDirection::LEFT, std::make_pair(i, j)) &&
+                    if (i - 1 != -1 && !HasWall(MapDirection::LEFT, std::make_pair(i, j)) &&
                         sMap.at(i - 1).at(j) == 255) {
                         sMap.at(i - 1).at(j) = count + 1;
                     }
                     // FRONT
-                    if (j + 1 != mazeSize &&
-                        !HasWall(MapDirection::FRONT, std::make_pair(i, j)) &&
+                    if (j + 1 != mazeSize && !HasWall(MapDirection::FRONT, std::make_pair(i, j)) &&
                         sMap.at(i).at(j + 1) == 255) {
                         sMap.at(i).at(j + 1) = count + 1;
                     }
                     // BACK
-                    if (j - 1 != -1 &&
-                        !HasWall(MapDirection::BACK, std::make_pair(i, j)) &&
+                    if (j - 1 != -1 && !HasWall(MapDirection::BACK, std::make_pair(i, j)) &&
                         sMap.at(i).at(j - 1) == 255) {
                         sMap.at(i).at(j - 1) = count + 1;
                     }
@@ -154,34 +154,38 @@ void MapController::GenerateStepMap() {
             }
         }
         count++;
-        if (count > mazeSize * mazeSize) {
+        if (count > max && count > mazeSize * mazeSize) {
             break;
         }
     }
 }
 
-std::queue<MapDirection> MapController::GetRoot(){
+std::queue<MapDirection> MapController::GetRoot() {
     std::queue<MapDirection> que;
     int step = GetStep(currentPos);
     auto cPos = currentPos;
-    while(step > 0){
+    while (step > 0) {
         // とりあえず右左上下の順番で探してく形で
         // LEFT
-        if(cPos.first - 1 > -1 && GetStep(mapPos(cPos.first - 1,(char)cPos.second)) == step - 1){
+        if (cPos.first - 1 > -1 && !HasWall(MapDirection::LEFT, cPos) &&
+            GetStep(mapPos(cPos.first - 1, (char)cPos.second)) == step - 1) {
             que.push(MapDirection::LEFT);
-            cPos = mapPos(cPos.first - 1,(char)cPos.second);
-        // RIGHT
-        } else if(cPos.first + 1 != mazeSize && GetStep(mapPos(cPos.first + 1,(char)cPos.second)) == step - 1){
+            cPos = mapPos(cPos.first - 1, (char)cPos.second);
+            // RIGHT
+        } else if (cPos.first + 1 != mazeSize && !HasWall(MapDirection::RIGHT, cPos) &&
+                   GetStep(mapPos(cPos.first + 1, (char)cPos.second)) == step - 1) {
             que.push(MapDirection::RIGHT);
-            cPos = mapPos(cPos.first + 1,(char)cPos.second);
-        // BACK
-        } else if(cPos.second - 1 > -1 && GetStep(mapPos((char)cPos.first,cPos.second-1)) == step - 1){
+            cPos = mapPos(cPos.first + 1, (char)cPos.second);
+            // BACK
+        } else if (cPos.second - 1 > -1 && !HasWall(MapDirection::BACK, cPos) &&
+                   GetStep(mapPos((char)cPos.first, cPos.second - 1)) == step - 1) {
             que.push(MapDirection::BACK);
-            cPos = mapPos((char)cPos.first,cPos.second - 1);
-        // FRONT
-        } else if(cPos.second + 1 != mazeSize && GetStep(mapPos((char)cPos.first,cPos.second + 1)) == step - 1){
+            cPos = mapPos((char)cPos.first, cPos.second - 1);
+            // FRONT
+        } else if (cPos.second + 1 != mazeSize && !HasWall(MapDirection::FRONT, cPos) &&
+                   GetStep(mapPos((char)cPos.first, cPos.second + 1)) == step - 1) {
             que.push(MapDirection::FRONT);
-            cPos = mapPos((char)cPos.first,cPos.second + 1);
+            cPos = mapPos((char)cPos.first, cPos.second + 1);
         }
         step--;
     }

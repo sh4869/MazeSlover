@@ -99,7 +99,7 @@ void PrintMap(MapController* controller) {
     std::cout << "map size:" << sizeof(map) * sizeof(map[0]) << std::endl;
     auto root = controller->GetRoot();
     while (!root.empty()) {
-        switch(root.front()){
+        switch (root.front()) {
             case MapDirection::FRONT:
                 std::cout << "^ ";
                 break;
@@ -111,19 +111,26 @@ void PrintMap(MapController* controller) {
                 break;
             case MapDirection::RIGHT:
                 std::cout << "> ";
-                break; 
+                break;
         }
         root.pop();
     }
+    std::cout << std::endl;
 }
 
 int main(void) {
     MapController* controller = new MapController();
     controller->InitMap();
-    GoalPositon goal = { std::make_pair(3, 0) };
+    GoalPositon goal = { std::make_pair(15, 0) };
     PrintMap(controller);
     controller->SetGoal(goal);
-    controller->GenerateStepMap();
+    PrintMap(controller);
+    for (int j = 0; j < mazeSize - 1; j++) {
+        for (int i = 0; i < mazeSize - 1; i++) {
+            controller->SetWall(MapDirection::RIGHT, mapPos(j, i + 1 * (j % 2)));
+            controller->UpdateStepMap(controller->GetStep(mapPos(j, i + 1 * (j % 2))) - 1);
+        }
+    }
     PrintMap(controller);
     return 0;
 }
