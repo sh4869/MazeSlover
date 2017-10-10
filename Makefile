@@ -26,6 +26,9 @@ $(OBJDIR)/%.o:%.cpp
 
 all: clean $(TARGET)
 
+run:
+	build/mazeslover
+
 clean:
 	-rm -f $(OBJECTS) $(DEPENDS) $(TARGET)
 
