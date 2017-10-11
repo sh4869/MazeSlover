@@ -183,35 +183,40 @@ void MapController::UpdateStepMap(int startStep) {
     }
 }
 
-
-std::queue<MapDirection> MapController::GetRoot() {
+std::queue<MapDirection> MapController::GetRoot(SearchMode mode) {
     std::queue<MapDirection> que;
     int step = GetStep(currentPos);
     auto cPos = currentPos;
-    while (step > 0) {
-        // とりあえず右左上下の順番で探してく形で
-        // LEFT
-        if (cPos.first - 1 > -1 && !HasWall(MapDirection::LEFT, cPos) &&
-            GetStep(mapPos(cPos.first - 1, (char)cPos.second)) == step - 1) {
-            que.push(MapDirection::LEFT);
-            cPos = mapPos(cPos.first - 1, (char)cPos.second);
-            // RIGHT
-        } else if (cPos.first + 1 != mazeSize && !HasWall(MapDirection::RIGHT, cPos) &&
-                   GetStep(mapPos(cPos.first + 1, (char)cPos.second)) == step - 1) {
-            que.push(MapDirection::RIGHT);
-            cPos = mapPos(cPos.first + 1, (char)cPos.second);
-            // BACK
-        } else if (cPos.second - 1 > -1 && !HasWall(MapDirection::BACK, cPos) &&
-                   GetStep(mapPos((char)cPos.first, cPos.second - 1)) == step - 1) {
-            que.push(MapDirection::BACK);
-            cPos = mapPos((char)cPos.first, cPos.second - 1);
-            // FRONT
-        } else if (cPos.second + 1 != mazeSize && !HasWall(MapDirection::FRONT, cPos) &&
-                   GetStep(mapPos((char)cPos.first, cPos.second + 1)) == step - 1) {
-            que.push(MapDirection::FRONT);
-            cPos = mapPos((char)cPos.first, cPos.second + 1);
-        }
-        step--;
+    switch (mode) {
+        case SearchMode::TOGOAL:
+        // TODO: SearchMode::TOUNSEARCHEDの実装
+        case SearchMode::TOUNSEARCHED:
+            while (step > 0) {
+                // とりあえず右左上下の順番で探してく形で
+                // LEFT
+                if (cPos.first - 1 > -1 && !HasWall(MapDirection::LEFT, cPos) &&
+                    GetStep(mapPos(cPos.first - 1, (char)cPos.second)) == step - 1) {
+                    que.push(MapDirection::LEFT);
+                    cPos = mapPos(cPos.first - 1, (char)cPos.second);
+                    // RIGHT
+                } else if (cPos.first + 1 != mazeSize && !HasWall(MapDirection::RIGHT, cPos) &&
+                           GetStep(mapPos(cPos.first + 1, (char)cPos.second)) == step - 1) {
+                    que.push(MapDirection::RIGHT);
+                    cPos = mapPos(cPos.first + 1, (char)cPos.second);
+                    // BACK
+                } else if (cPos.second - 1 > -1 && !HasWall(MapDirection::BACK, cPos) &&
+                           GetStep(mapPos((char)cPos.first, cPos.second - 1)) == step - 1) {
+                    que.push(MapDirection::BACK);
+                    cPos = mapPos((char)cPos.first, cPos.second - 1);
+                    // FRONT
+                } else if (cPos.second + 1 != mazeSize && !HasWall(MapDirection::FRONT, cPos) &&
+                           GetStep(mapPos((char)cPos.first, cPos.second + 1)) == step - 1) {
+                    que.push(MapDirection::FRONT);
+                    cPos = mapPos((char)cPos.first, cPos.second + 1);
+                }
+                step--;
+            }
+            break;
     }
     return que;
 }
