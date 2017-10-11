@@ -3,6 +3,7 @@
 
 #include <array>
 #include <bitset>
+#include <queue>
 #include <utility>
 
 // Types
@@ -46,7 +47,7 @@ public:
     bool HasWall(MapDirection dir, MapPosition pos);
     PosStatus GetPosStatus(MapPosition pos);
     unsigned char GetStep(MapPosition pos);
-    //std::queue<MapDirection> GetRoot();
+    std::queue<MapDirection> GetRoot();
     const WallMap& GetWallMap();
     const StepMap& GetStepMap();
     

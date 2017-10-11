@@ -1,7 +1,4 @@
 #include "MapController.h"
-#include <bitset>
-#include <utility>
-
 
 MapController* MapController::instance = nullptr;
 
@@ -87,13 +84,11 @@ PosStatus MapController::GetPosStatus(MapPosition pos) {
         return PosStatus::GOAL;
     } else if (!bit[3] && bit[2]) {
         return PosStatus::SEARCHED;
-    } else if (!bit[3] && !bit[2]) {
-        return PosStatus::UNSEARCHED;
     }
+    return PosStatus::UNSEARCHED;
 }
 
 unsigned char MapController::GetStep(MapPosition pos) { return sMap.at(pos.first).at(pos.second); }
-
 
 void MapController::init() {
     wMap = {};
@@ -145,13 +140,9 @@ void MapController::SetGoal(std::array<MapPosition, goalSize> goal) {
 }
 
 void MapController::UpdateStepMap(int startStep) {
-    int max = startStep;
     for (int i = 0; i < mazeSize; i++) {
         for (int j = 0; j < mazeSize; j++) {
             if (sMap.at(i).at(j) > startStep) {
-                if (sMap.at(i).at(j) > max) {
-                    max = sMap.at(i).at(j);
-                }
                 sMap.at(i).at(j) = 255;
             }
         }
@@ -185,13 +176,14 @@ void MapController::UpdateStepMap(int startStep) {
             }
         }
         count++;
-        if (count > max && count > mazeSize * mazeSize) {
+        // TODO : ここをもうちょっと短くしたい
+        if (count > mazeSize * mazeSize) {
             break;
         }
     }
 }
 
-/*
+
 std::queue<MapDirection> MapController::GetRoot() {
     std::queue<MapDirection> que;
     int step = GetStep(currentPos);
@@ -223,5 +215,3 @@ std::queue<MapDirection> MapController::GetRoot() {
     }
     return que;
 }
-
-*/
