@@ -80,9 +80,9 @@ PosStatus MapController::GetPosStatus(MapPosition pos) {
     std::bitset<8> bit = wMap.at(pos.first).at(pos.second);
     if (bit[3] && bit[2]) {
         return PosStatus::CURRENT;
-    } else if (bit[3] && !bit[2]) {
-        return PosStatus::GOAL;
     } else if (!bit[3] && bit[2]) {
+        return PosStatus::GOAL;
+    } else if (bit[3] && !bit[2]) {
         return PosStatus::SEARCHED;
     }
     return PosStatus::UNSEARCHED;
@@ -112,6 +112,11 @@ MapController* MapController::GetInstance() {
 
 void MapController::InitMap() {
     MapPosition pos;
+    wMap = {};
+    WallInfo info = static_cast<std::bitset<8> >(0);
+    for (auto m : wMap) {
+        m.fill(info);
+    }
     for (std::size_t i = 0; i < mazeSize; ++i) {
         // 一番上
         SetWall(MapDirection::FRONT, std::make_pair(i, mazeSize - 1));

@@ -21,7 +21,7 @@ static constexpr auto mapPos = std::make_pair<MapPosition::first_type, MapPositi
 
 using StepMap = std::array<std::array<unsigned char, mazeSize>, mazeSize>;
 
-static constexpr char goalSize = 1;
+static constexpr char goalSize = 4;
 using GoalPositon = std::array<MapPosition, goalSize>;
 
 class MapController {
