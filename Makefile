@@ -6,11 +6,11 @@ else
   LDFLAGS =
 endif
 LIBS      =
-INCLUDE   = -I./MazeSlover
+INCLUDE   = -I./Inc
 TARGET    = ./build/$(shell basename `readlink -f .`)
 
-SOURCES   = $(wildcard Src/*.cpp) \
-$(wildcard MazeSlover/*.cpp)
+SOURCES   = main.cpp \
+$(wildcard Src/*.cpp)
 
 OBJDIR    = ./build
 OBJECTS = $(addprefix $(OBJDIR)/,$(notdir $(SOURCES:.cpp=.o)))

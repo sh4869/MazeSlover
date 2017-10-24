@@ -97,7 +97,7 @@ void PrintMap(MapController* controller) {
     }
     std::cout << std::endl;
     std::cout << "map size:" << sizeof(map) * sizeof(map[0]) << std::endl;
-    
+
     auto root = controller->GetRoot(SearchMode::TOGOAL);
     while (!root.empty()) {
         switch (root.front()) {
@@ -122,10 +122,11 @@ void PrintMap(MapController* controller) {
 int main(void) {
     MapController* controller = MapController::GetInstance();
     controller->InitMap();
-    GoalPositon goal = { std::make_pair(15, 0) };
+    GoalPositon goal = { std::make_pair(5, 6), std::make_pair(5, 7), std::make_pair(6, 6),
+                         std::make_pair(6, 7) };
     controller->SetGoal(goal);
     PrintMap(controller);
-    for (int j = 0; j < mazeSize - 1; j++) {
+    for (int j = 0; j < 5; j++) {
         for (int i = 0; i < mazeSize - 1; i++) {
             controller->SetWall(MapDirection::RIGHT, std::make_pair(j, i + 1 * (j % 2)));
             controller->UpdateStepMap(controller->GetStep(std::make_pair(j, i + 1 * (j % 2))) - 1);
