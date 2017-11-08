@@ -23,17 +23,17 @@ void PrintMap(Maze::MapController* controller) {
             } else {
                 std::cout << " ";
             }
-            switch (controller->GetPosStatus(std::make_pair(i, j))) {
-                case Maze::PosStatus::UNSEARCHED:
+            switch (controller->GetPositionStatus(std::make_pair(i, j))) {
+                case Maze::PositionStatus::UNSEARCHED:
                     std::cout << " ? ";
                     break;
-                case Maze::PosStatus::GOAL:
+                case Maze::PositionStatus::GOAL:
                     std::cout << " G ";
                     break;
-                case Maze::PosStatus::SEARCHED:
+                case Maze::PositionStatus::SEARCHED:
                     std::cout << "   ";
                     break;
-                case Maze::PosStatus::CURRENT:
+                case Maze::PositionStatus::CURRENT:
                     std::cout << " ^ ";
                     break;
             }

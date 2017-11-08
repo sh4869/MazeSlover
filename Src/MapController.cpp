@@ -31,23 +31,27 @@ namespace Maze {
         }
     }
 
-    void MapController::setPosStatus(MapPosition pos, PosStatus status) {
+    void MapController::setPositionStatus(MapPosition pos, PositionStatus status) {
         switch (status) {
-            case PosStatus::CURRENT:
-                wMap.at(pos.first).at(pos.second)[2] = 1;
+            case PositionStatus::CURRENT:
+                // 11
                 wMap.at(pos.first).at(pos.second)[3] = 1;
-                break;
-            case PosStatus::GOAL:
                 wMap.at(pos.first).at(pos.second)[2] = 1;
-                wMap.at(pos.first).at(pos.second)[3] = 0;
                 break;
-            case PosStatus::SEARCHED:
-                wMap.at(pos.first).at(pos.second)[2] = 0;
+            case PositionStatus::GOAL:
+                // 10
                 wMap.at(pos.first).at(pos.second)[3] = 1;
-                break;
-            case PosStatus::UNSEARCHED:
                 wMap.at(pos.first).at(pos.second)[2] = 0;
+                break;
+            case PositionStatus::SEARCHED:
+                // 01
                 wMap.at(pos.first).at(pos.second)[3] = 0;
+                wMap.at(pos.first).at(pos.second)[2] = 1;
+                break;
+            case PositionStatus::UNSEARCHED:
+                // 00
+                wMap.at(pos.first).at(pos.second)[3] = 0;
+                wMap.at(pos.first).at(pos.second)[2] = 0;
                 break;
         }
     }
@@ -87,7 +91,7 @@ namespace Maze {
         return false;
     }
 
-    PosStatus MapController::GetPosStatus(MapPosition pos) {
+    PositionStatus MapController::GetPositionStatus(MapPosition pos) {
         std::bitset<8> bit = wMap.at(pos.first).at(pos.second);
         if (bit[3] && bit[2]) {
             return PosStatus::CURRENT;
@@ -142,13 +146,13 @@ namespace Maze {
         }
         SetWall(MapDirection::RIGHT, std::make_pair(0, 0));
         currentPos = mapPos(0, 0);
-        setPosStatus(mapPos(0, 0), PosStatus::CURRENT);
+        setPositionStatus(mapPos(0, 0), PositionStatus::CURRENT);
     }
 
     void MapController::SetGoal(std::array<MapPosition, goalSize> goal) {
         goalPos = goal;
         for (auto g : goal) {
-            setPosStatus(mapPos((char)g.first, (char)g.second), PosStatus::GOAL);
+            setPositionStatus(mapPos((char)g.first, (char)g.second), PositionStatus::GOAL);
             sMap.at(g.first).at(g.second) = 0;
         }
         UpdateStepMap();

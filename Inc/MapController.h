@@ -2,7 +2,7 @@
 #define MAPCONTROLLER_H_
 
 #include "MapPosition.h"
-
+#include "MazeTypes.h"
 #include <array>
 #include <bitset>
 #include <queue>
@@ -10,12 +10,6 @@
 
 // Types
 namespace Maze {
-/**
- * Position Status of Maze
- */
-enum class PosStatus : char { UNSEARCHED, SEARCHED, GOAL, CURRENT };
-enum class MapDirection : int { LEFT, BACK, RIGHT, FRONT };
-enum class SearchMode : int { TOGOAL, TOUNSEARCHED };
 
 using WallInfo = std::bitset<8>;
 using WallMap = std::array<std::array<WallInfo, mazeSize>, mazeSize>;
@@ -27,33 +21,25 @@ private:
     static MapController* instance;
     WallMap wMap;
     StepMap sMap;
-
     GoalPositon goalPos;
     MapPosition currentPos;
-
     MapController();
     void init();
-    void setPosStatus(MapPosition pos, PosStatus status);
+    void setPositionStatus(MapPosition pos, PositionStatus status);
 
 public:
     static MapController* GetInstance();
     void InitMap();
-
+    void ExportMaze();    
     void UpdateStepMap();
 
-    /**
-     * @brief Export Maze for filesystem
-     *
-     */
-    void ExportMaze();
-    
     bool HasWall(MapPosition pos, MapDirection dir);
-    PosStatus GetPosStatus(MapPosition pos);
+    PositionStatus GetPositionStatus(MapPosition pos);
     unsigned char GetStep(MapPosition pos);
     std::queue<MapDirection> GetRoot(SearchMode mode);
     const WallMap& GetWallMap() { return wMap; }
     const StepMap& GetStepMap() { return sMap; }
-
+    
     // Setter
     void SetWall(MapDirection dir, MapPosition pos);
     void SetGoal(GoalPositon goal);
