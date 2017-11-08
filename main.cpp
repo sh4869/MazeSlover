@@ -10,7 +10,7 @@ void PrintMap(Maze::MapController* controller) {
     for (int j = Maze::mazeSize - 1; j >= 0; j--) {
         for (int i = 0; i < Maze::mazeSize; i++) {
             std::cout << "*";
-            if (controller->HasWall(Maze::MapDirection::FRONT, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::FRONT)) {
                 std::cout << "---";
             } else {
                 std::cout << "   ";
@@ -18,7 +18,7 @@ void PrintMap(Maze::MapController* controller) {
         }
         std::cout << "*" << std::endl;
         for (int i = 0; i < Maze::mazeSize; i++) {
-            if (controller->HasWall(Maze::MapDirection::LEFT, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::LEFT)) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
@@ -37,7 +37,7 @@ void PrintMap(Maze::MapController* controller) {
                     std::cout << " ^ ";
                     break;
             }
-            if (controller->HasWall(Maze::MapDirection::RIGHT, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::RIGHT)) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
@@ -47,7 +47,7 @@ void PrintMap(Maze::MapController* controller) {
         std::cout << std::endl;
         for (int i = 0; i < Maze::mazeSize; i++) {
             std::cout << "*";
-            if (controller->HasWall(Maze::MapDirection::BACK, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::BACK)) {
                 std::cout << "---";
             } else {
                 std::cout << "   ";
@@ -61,7 +61,7 @@ void PrintMap(Maze::MapController* controller) {
     for (int j = Maze::mazeSize - 1; j >= 0; j--) {
         for (int i = 0; i < Maze::mazeSize; i++) {
             std::cout << "*";
-            if (controller->HasWall(Maze::MapDirection::FRONT, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::FRONT)) {
                 std::cout << "-----";
             } else {
                 std::cout << "     ";
@@ -69,7 +69,7 @@ void PrintMap(Maze::MapController* controller) {
         }
         std::cout << "*" << std::endl;
         for (int i = 0; i < Maze::mazeSize; i++) {
-            if (controller->HasWall(Maze::MapDirection::LEFT, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::LEFT)) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
@@ -77,7 +77,7 @@ void PrintMap(Maze::MapController* controller) {
             std::cout << " ";
             printf("%3d", static_cast<int>(sMap.at(i).at(j)));
             std::cout << " ";
-            if (controller->HasWall(Maze::MapDirection::RIGHT, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::RIGHT)) {
                 std::cout << "|";
             } else {
                 std::cout << " ";
@@ -87,7 +87,7 @@ void PrintMap(Maze::MapController* controller) {
         std::cout << std::endl;
         for (int i = 0; i < Maze::mazeSize; i++) {
             std::cout << "*";
-            if (controller->HasWall(Maze::MapDirection::BACK, std::make_pair(i, j))) {
+            if (controller->HasWall(std::make_pair(i, j),Maze::MapDirection::BACK)) {
                 std::cout << "-----";
             } else {
                 std::cout << "     ";

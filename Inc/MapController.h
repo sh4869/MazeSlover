@@ -17,7 +17,6 @@ enum class PosStatus : char { UNSEARCHED, SEARCHED, GOAL, CURRENT };
 enum class MapDirection : int { LEFT, BACK, RIGHT, FRONT };
 enum class SearchMode : int { TOGOAL, TOUNSEARCHED };
 
-
 using WallInfo = std::bitset<8>;
 using WallMap = std::array<std::array<WallInfo, mazeSize>, mazeSize>;
 using StepMap = std::array<std::array<unsigned char, mazeSize>, mazeSize>;
@@ -47,10 +46,8 @@ public:
      *
      */
     void ExportMaze();
-
-    // Getter
     
-    bool HasWall(MapDirection dir, MapPosition pos);
+    bool HasWall(MapPosition pos, MapDirection dir);
     PosStatus GetPosStatus(MapPosition pos);
     unsigned char GetStep(MapPosition pos);
     std::queue<MapDirection> GetRoot(SearchMode mode);
