@@ -151,18 +151,22 @@ namespace Maze {
             setPosStatus(mapPos((char)g.first, (char)g.second), PosStatus::GOAL);
             sMap.at(g.first).at(g.second) = 0;
         }
-        UpdateStepMap(0);
+        UpdateStepMap();
     }
 
-    void MapController::UpdateStepMap(int startStep) {
-        for (int i = 0; i < mazeSize; i++) {
-            for (int j = 0; j < mazeSize; j++) {
-                if (sMap.at(i).at(j) > startStep) {
-                    sMap.at(i).at(j) = 255;
-                }
+    void MapController::UpdateStepMap() {
+        // とりあえず最大値を設定
+        for(int i = 0;i < mazeSize;i++){
+            for(int j = 0;j < mazeSize;j++){
+                sMap.at(i).at(j) = 255;
             }
         }
-        int count = startStep;
+        // ゴール座標を0に設定
+        for(auto g : goalPos){
+            sMap.at(g.first).at(g.second) = 0;
+        }
+        // 歩数マップの生成
+        int count = 0;
         while (1) {
             for (int i = 0; i < mazeSize; i++) {
                 for (int j = 0; j < mazeSize; j++) {

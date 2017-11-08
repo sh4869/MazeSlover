@@ -122,14 +122,14 @@ void PrintMap(Maze::MapController* controller) {
 int main(void) {
     Maze::MapController* controller = Maze::MapController::GetInstance();
     controller->InitMap();
-    Maze::GoalPositon goal = { std::make_pair(5, 6), std::make_pair(5, 7), std::make_pair(6, 6),
-                         std::make_pair(6, 7) };
+    Maze::GoalPositon goal = { Maze::mapPos(5, 6), Maze::mapPos(5, 7), Maze::mapPos(6, 6),
+                               Maze::mapPos(6, 7) };
     controller->SetGoal(goal);
     PrintMap(controller);
-    for (int j = 0; j < 5; j++) {
+    for (int j = 0; j < Maze::mazeSize - 1; j++) {
         for (int i = 0; i < Maze::mazeSize - 1; i++) {
             controller->SetWall(Maze::MapDirection::RIGHT, std::make_pair(j, i + 1 * (j % 2)));
-            controller->UpdateStepMap(controller->GetStep(std::make_pair(j, i + 1 * (j % 2))) - 1);
+            controller->UpdateStepMap();
         }
     }
     PrintMap(controller);

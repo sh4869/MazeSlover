@@ -40,7 +40,7 @@ public:
     static MapController* GetInstance();
     void InitMap();
 
-    void UpdateStepMap(int startStep);
+    void UpdateStepMap();
 
     /**
      * @brief Export Maze for filesystem
