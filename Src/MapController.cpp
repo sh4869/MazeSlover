@@ -93,14 +93,7 @@ namespace Maze {
 
     PositionStatus MapController::GetPositionStatus(MapPosition pos) {
         std::bitset<8> bit = wMap.at(pos.first).at(pos.second);
-        if (bit[3] && bit[2]) {
-            return PosStatus::CURRENT;
-        } else if (!bit[3] && bit[2]) {
-            return PosStatus::GOAL;
-        } else if (bit[3] && !bit[2]) {
-            return PosStatus::SEARCHED;
-        }
-        return PosStatus::UNSEARCHED;
+        return static_cast<PositionStatus>((bit >> 2).to_ulong());
     }
 
     unsigned char MapController::GetStep(MapPosition pos) {
