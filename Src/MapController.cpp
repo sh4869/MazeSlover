@@ -1,4 +1,5 @@
 #include "MapController.h"
+#include <queue>
 
 namespace Maze {
     MapController* MapController::instance = nullptr;
@@ -152,6 +153,7 @@ namespace Maze {
     }
 
     void MapController::UpdateStepMap() {
+        std::queue<MapPosition> posqueue;
         // とりあえず最大値を設定
         for (int i = 0; i < mazeSize; i++) {
             for (int j = 0; j < mazeSize; j++) {
@@ -161,43 +163,36 @@ namespace Maze {
         // ゴール座標を0に設定
         for (auto g : goalPos) {
             sMap.at(g.first).at(g.second) = 0;
+            posqueue.push(mapPos((char)g.first, (char)g.second));
         }
-        // 歩数マップの生成
-        int count = 0;
-        while (1) {
-            for (int i = 0; i < mazeSize; i++) {
-                for (int j = 0; j < mazeSize; j++) {
-                    if (sMap.at(i).at(j) == count) {
-                        // RIGHT
-                        if (i + 1 != mazeSize &&
-                            !HasWall(std::make_pair(i, j), MapDirection::RIGHT) &&
-                            sMap.at(i + 1).at(j) == 255) {
-                            sMap.at(i + 1).at(j) = count + 1;
-                        }
-                        // LEFT
-                        if (i - 1 != -1 && !HasWall(std::make_pair(i, j), MapDirection::LEFT) &&
-                            sMap.at(i - 1).at(j) == 255) {
-                            sMap.at(i - 1).at(j) = count + 1;
-                        }
-                        // FRONT
-                        if (j + 1 != mazeSize &&
-                            !HasWall(std::make_pair(i, j), MapDirection::FRONT) &&
-                            sMap.at(i).at(j + 1) == 255) {
-                            sMap.at(i).at(j + 1) = count + 1;
-                        }
-                        // BACK
-                        if (j - 1 != -1 && !HasWall(std::make_pair(i, j), MapDirection::BACK) &&
-                            sMap.at(i).at(j - 1) == 255) {
-                            sMap.at(i).at(j - 1) = count + 1;
-                        }
-                    }
-                }
+        while (!posqueue.empty()) {
+            auto pos = posqueue.front();
+            auto count = sMap.at(pos.first).at(pos.second);
+            // RIGHT
+            if (!Position::IsRightEnd(pos) && !HasWall(pos, MapDirection::RIGHT) &&
+                sMap.at(pos.first+1).at(pos.second) == 255) {
+                sMap.at(pos.first+1).at(pos.second) = count + 1;
+                posqueue.push(mapPos((char)pos.first+1, (char)pos.second));
             }
-            count++;
-            // TODO : ここをもうちょっと短くしたい
-            if (count > mazeSize * mazeSize) {
-                break;
+            // LEFT
+            if (!Position::IsLeftEnd(pos) && !HasWall(pos, MapDirection::LEFT) &&
+                sMap.at(pos.first - 1).at(pos.second) == 255) {
+                sMap.at(pos.first - 1).at(pos.second) = count + 1;
+                posqueue.push(mapPos((char)pos.first-1, (char)pos.second));
             }
+            // FRONT
+            if (!Position::IsTop(pos) && !HasWall(pos, MapDirection::FRONT) &&
+                sMap.at(pos.first).at(pos.second + 1) == 255) {
+                sMap.at(pos.first).at(pos.second + 1) = count + 1;
+                posqueue.push(mapPos((char)pos.first, (char)pos.second+1));
+            }
+            // BACK
+            if (!Position::IsBottom(pos) && !HasWall(pos, MapDirection::BACK) &&
+                sMap.at(pos.first).at(pos.second - 1) == 255) {
+                sMap.at(pos.first).at(pos.second - 1) = count + 1;
+                posqueue.push(mapPos((char)pos.first, (char)pos.second-1));
+            }
+            posqueue.pop();
         }
     }
 
@@ -240,4 +235,4 @@ namespace Maze {
     }
 
     void MapController::ExportMaze() {}
-}
+}  // namespace Maze
